@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="Experiência interativa de aniversário com caixa de presente, partículas e coração animado."
+    />
+    <title>Love-y</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <div class="viewport-frame">
+        <section class="scene scene--gift is-active" id="giftScene" aria-labelledby="giftTitle">
+          <div class="scene__inner">
+            <header class="hero-copy">
+              <p class="eyebrow">Uma surpresa especial</p>
+              <h1 id="giftTitle">Toque na caixa e desbloqueie o presente.</h1>
+              <p class="support-text">Cada clique aproxima você do grande momento.</p>
+            </header>
+
+            <div class="progress-area" aria-live="polite">
+              <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+                <div class="progress-indicator" id="progressIndicator">
+                  <img id="spiderIndicator" src="" alt="Indicador de progresso decorativo" hidden />
+                  <span class="progress-fallback" id="progressFallback">★</span>
+                </div>
+              </div>
+              <p class="progress-label"><span id="clickCount">0</span>/<span id="maxClicksLabel">10</span> cliques</p>
+            </div>
+
+            <div class="gift-stage">
+              <button class="gift-box" id="giftBox" type="button" aria-label="Abrir presente">
+                <span class="gift-box__lid"></span>
+                <span class="gift-box__body">
+                  <span class="gift-box__ribbon gift-box__ribbon--vertical"></span>
+                  <span class="gift-box__ribbon gift-box__ribbon--horizontal"></span>
+                  <span class="gift-box__shine"></span>
+                </span>
+              </button>
+              <div class="tap-hint">Toque até a mágica acontecer ✨</div>
+              <div class="particle-layer" id="particleLayer" aria-hidden="true"></div>
+              <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="scene scene--transition" id="transitionScene" aria-hidden="true">
+          <div class="scene__inner scene__inner--transition">
+            <video id="transitionVideo" playsinline muted preload="auto"></video>
+            <div class="transition-fallback">Preparando o grande final…</div>
+          </div>
+        </section>
+
+        <section class="scene scene--heart" id="heartScene" aria-labelledby="heartTitle" aria-hidden="true">
+          <div class="scene__inner scene__inner--heart">
+            <div class="heart-copy">
+              <p class="eyebrow eyebrow--heart">Com carinho</p>
+              <h2 id="heartTitle">Feliz aniversario &lt;3 Juh</h2>
+            </div>
+            <div class="heart-cloud" id="heartCloud" aria-hidden="true"></div>
+            <button class="audio-unlock" id="audioUnlock" type="button" hidden>Toque para ouvir a música 🎵</button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
