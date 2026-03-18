@@ -16,6 +16,10 @@ const CONFIG = {
   audioLoop: true,
   audioStartEvent: 'heartScene',
 
+  clickSoundEnabled: false,
+  clickSoundTrack: 'assets/click.mp3',
+  clickSoundVolume: 0.7,
+
   heartText: 'Feliz aniversario <3 Juh',
   heartItems: 100,
 };
@@ -24,6 +28,7 @@ const state = {
   clicks: 0,
   audioUnlocked: false,
   audioStarted: false,
+  clickSoundReady: false,
   finalTriggered: false,
 };
 
@@ -47,6 +52,7 @@ const elements = {
 };
 
 let audio;
+let clickSound;
 
 init();
 
@@ -88,7 +94,12 @@ function setupIndicator() {
 }
 
 function setupGiftInteraction() {
+  elements.giftBox.addEventListener('pointerdown', handleGiftPress, { passive: true });
   elements.giftBox.addEventListener('click', handleGiftClick, { passive: true });
+}
+
+function handleGiftPress() {
+  playClickSound();
 }
 
 function handleGiftClick() {
@@ -240,28 +251,46 @@ async function tryPlayTransitionVideo() {
 }
 
 function setupAudio() {
-  if (!CONFIG.audioEnabled) {
+  if (CONFIG.audioEnabled) {
+    audio = new Audio(CONFIG.audioTrack);
+    audio.loop = CONFIG.audioLoop;
+    audio.volume = CONFIG.audioVolume;
+    audio.preload = 'auto';
+
+    audio.addEventListener('canplaythrough', () => {
+      state.audioUnlocked = true;
+    });
+
+    audio.addEventListener('error', () => {
+      state.audioUnlocked = false;
+    });
+
+    elements.audioUnlock.addEventListener('click', async () => {
+      const started = await playAudio();
+      if (started) {
+        elements.audioUnlock.hidden = true;
+      }
+    });
+  }
+
+  setupClickSound();
+}
+
+function setupClickSound() {
+  if (!CONFIG.clickSoundEnabled) {
     return;
   }
 
-  audio = new Audio(CONFIG.audioTrack);
-  audio.loop = CONFIG.audioLoop;
-  audio.volume = CONFIG.audioVolume;
-  audio.preload = 'auto';
+  clickSound = new Audio(CONFIG.clickSoundTrack);
+  clickSound.volume = CONFIG.clickSoundVolume;
+  clickSound.preload = 'auto';
 
-  audio.addEventListener('canplaythrough', () => {
-    state.audioUnlocked = true;
+  clickSound.addEventListener('canplaythrough', () => {
+    state.clickSoundReady = true;
   });
 
-  audio.addEventListener('error', () => {
-    state.audioUnlocked = false;
-  });
-
-  elements.audioUnlock.addEventListener('click', async () => {
-    const started = await playAudio();
-    if (started) {
-      elements.audioUnlock.hidden = true;
-    }
+  clickSound.addEventListener('error', () => {
+    state.clickSoundReady = false;
   });
 }
 
@@ -290,6 +319,18 @@ async function playAudio() {
   } catch (error) {
     return false;
   }
+}
+
+function playClickSound() {
+  if (!CONFIG.clickSoundEnabled || !clickSound) {
+    return;
+  }
+
+  const sound = state.clickSoundReady ? clickSound.cloneNode() : clickSound;
+  sound.volume = CONFIG.clickSoundVolume;
+  sound.currentTime = 0;
+
+  sound.play().catch(() => {});
 }
 
 function buildHeart() {
